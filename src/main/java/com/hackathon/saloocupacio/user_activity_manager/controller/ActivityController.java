@@ -91,18 +91,6 @@ public class ActivityController {
         return "redirect:/appActivities/activities";
     }
 
-
-//    @GetMapping("/activities/signup/{id}")
-//    public String getActivityDetails(@PathVariable Long id, Model model) {
-//        Activity activity = activityService.findById(id);
-//        List<User> users = userService.getAllUsers();
-//        User user = new User(); // Initialize a new User object
-//        model.addAttribute("activity", activity);
-//        model.addAttribute("users", users);
-//        model.addAttribute("user", user); // Pass the user object to the HTML file
-//        return "activityDetails";
-//    }
-
     @GetMapping("/activities/signup/{activityId}")
     public String signUpToActivity(@PathVariable Long activityId, Model model) {
         Activity activity = activityService.findById(activityId);
@@ -112,10 +100,10 @@ public class ActivityController {
         model.addAttribute("users", users);
         return "activityDetails";
     }
+
     @PostMapping("activities/signup/{activityId}")
     public String signUpUserToActivity(@PathVariable Long activityId, @RequestParam Long userId) {
         activityService.signUpUserInActivity(activityId, userId);
         return "redirect:/appActivities/activities";
     }
-
 }

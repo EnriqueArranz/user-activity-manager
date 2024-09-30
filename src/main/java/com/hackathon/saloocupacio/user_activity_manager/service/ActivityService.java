@@ -78,28 +78,11 @@ public class ActivityService {
         activityRepository.save(existingActivity);
     }
 
-    public void signUpForActivity(Long activityId, Long userId) {
-        Activity activity = activityRepository.findById(activityId).orElseThrow();
-        User user = userRepository.findById(userId).orElseThrow();
-        activity.getUsers().add(user);
-        activityRepository.save(activity);
-    }
-
     public Activity findById(Long id) {
         return activityRepository.findById(id).orElseThrow();
     }
 
-    @Transactional
-    public void signUpUserForActivity(Long activityId, Long userId) {
-        Activity activity = activityRepository.findById(activityId).orElseThrow();
-        User user = userRepository.findById(userId).orElseThrow();
-        if (!activity.getUsers().contains(user)) {
-            activity.getUsers().add(user);
-            activityRepository.save(activity);
-        }
-    }
-
-    public void signUpUserInActivity(Long activityId , Long userId) {
+    public void signUpUserInActivity(Long activityId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         Activity activity = activityRepository.findById(activityId).orElseThrow();
         user.getActivities().add(activity);

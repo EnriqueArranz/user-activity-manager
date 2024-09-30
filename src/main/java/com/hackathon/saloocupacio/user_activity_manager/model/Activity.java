@@ -9,9 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.HashSet;
 import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -35,6 +36,7 @@ public class Activity {
     @Max(value = 1000, message = "Max capacity must be less than 1000")
     private int maxCapacity;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "activities")
     private Set<User> users = new HashSet<>();
 }
