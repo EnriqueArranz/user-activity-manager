@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Sign up to Activity</title>
+</head>
+<body>
+<h1>Sign up to Activity</h1>
+<p>Activity ID: <span th:text="${activityId}">ID</span></p>
+<form th:action="@{{activityId}(activityId=${activityId})}" method="post">
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required>
+  <input type="submit" value="Sign up"/>
+</form>
+<div th:if="${param.success}">
+  <p class="success">You have successfully signed up to the activity!</p>
+</div>
+</body>
+</html>
