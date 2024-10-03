@@ -70,7 +70,7 @@ The application uses Thymeleaf for server-side rendering of HTML pages, providin
 ## Initial Data
 
 On first run, the application automatically generates 10 sample records using Faker. This allows you to immediately interact with the application and explore its features without needing to input data manually.
-The application uses Thymeleaf for server-side rendering of HTML pages, providing a user-friendly interface for managing user activities. You can navigate through different pages and perform various operations directly in your browser.
+
 
 ## Built With
 
