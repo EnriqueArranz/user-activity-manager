@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -32,6 +33,10 @@ public class ActivityController {
 
     @PostMapping("/activity")
     public String createActivity(@ModelAttribute Activity activity, RedirectAttributes redirectAttributes) {
+        if (activityService.existsActivityWithName(activity.getName())) {
+            redirectAttributes.addFlashAttribute("error", "Activity with the same name already exists");
+            return "redirect:/appActivities/activities";
+        }
         activityService.createActivity(activity);
         redirectAttributes.addFlashAttribute("addSuccess", true);
         return "redirect:/appActivities/activities";
@@ -44,11 +49,16 @@ public class ActivityController {
         return "activities";
     }
 
-    @PostMapping("/activities/{id}")
+    @DeleteMapping("/activities/{id}")
     public String deleteActivity(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         activityService.deleteActivity(id);
         redirectAttributes.addFlashAttribute("deleteSuccess", true);
         return "redirect:/appActivities/activities";
+    }
+    @DeleteMapping("/activities/{activityId}/users/{userId}")
+    public String deleteUserFromActivity(@PathVariable Long activityId, @PathVariable Long userId) {
+        activityService.removeUserFromActivity(activityId, userId);
+        return "redirect:/appActivities/activities/" + activityId + "/users";
     }
 
     @PostMapping("/activities/import")
@@ -94,7 +104,7 @@ public class ActivityController {
         return "redirect:/appActivities/activities";
     }
 
-    @GetMapping("/activities/signup/{activityId}")
+    @GetMapping("/activities/{activityId}/signup")
     public String signUpToActivity(@PathVariable Long activityId, Model model) {
         Activity activity = activityService.findById(activityId);
         List<User> users = userService.getAllUsers();
@@ -108,8 +118,8 @@ public class ActivityController {
         return "activityDetails";
     }
 
-    @PostMapping("activities/signup/{activityId}")
-    public String signUpUserToActivity(@PathVariable Long activityId, @RequestParam Long userId, RedirectAttributes redirectAttrs) {
+    @PostMapping("activities/{activityId}/signup/{userId}")
+    public String signUpUserToActivity(@PathVariable Long activityId, @PathVariable Long userId, RedirectAttributes redirectAttrs) {
         SignUpResponse response = activityService.signUpUserInActivity(activityId, userId);
         if (response.isSuccess()) {
             redirectAttrs.addFlashAttribute("message", response.getMessage());
@@ -120,15 +130,15 @@ public class ActivityController {
         }
         return "redirect:/appActivities/activities/signup/" + activityId;
     }
-    @GetMapping("/activities/signup/{activityId}/users")
+    @GetMapping("/activities/{activityId}/users")
     public String getUsersInActivity(@PathVariable Long activityId, Model model) {
-        Optional<List<User>> users = activityService.getUsersInActivity(activityId);
+        Optional<List<User>> usersInActivity = activityService.getUsersInActivity(activityId);
         Activity activity = activityService.getActivityById(activityId);
         model.addAttribute("activity", activity);
-        if (users.isPresent()) {
-            model.addAttribute("users", users.get());
+        if (usersInActivity.isPresent()) {
+            model.addAttribute("usersInActivity", usersInActivity.get());
         } else {
-            model.addAttribute("users", Collections.emptyList());
+            model.addAttribute("usersInActivity", Collections.emptyList());
             model.addAttribute("noUsers", true);
         }
         return "usersInActivity";

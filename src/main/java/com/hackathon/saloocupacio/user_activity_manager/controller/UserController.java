@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public String editUser(@PathVariable Long id, Model model) {
+    public String editPanelUser(@PathVariable Long id, Model model) {
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
         return "updateUser";
@@ -49,8 +49,6 @@ public class UserController {
         userService.deleteUser(id);
         return "redirect:/appActivities/users";
     }
-
-
 
     @GetMapping("/signup/{activityId}")
     public String signUpToActivity(@PathVariable Long activityId, Model model) {

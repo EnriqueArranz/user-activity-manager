@@ -94,4 +94,17 @@ public class ActivityService {
         Activity activity = activityRepository.findById(activityId).orElseThrow();
         return Optional.ofNullable(activity.getUsers() != null ? new ArrayList<>(activity.getUsers()) : null);
     }
+    public boolean existsActivityWithName(String name) {
+        return activityRepository.existsByName(name);
+    }
+
+    public void removeUserFromActivity(Long activityId, Long userId) {
+        // Assuming you have a repository for activities and users
+        Activity activity = activityRepository.findById(activityId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
+
+        activity.getUsers().remove(user);
+        user.getActivities().remove(activity);
+        activityRepository.save(activity);
+    }
 }

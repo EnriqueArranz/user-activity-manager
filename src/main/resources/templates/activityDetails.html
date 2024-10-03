@@ -48,20 +48,26 @@
                     <p>Users Signed Up: <span th:text="${activity.users.size()}" th:style="'color: green'">Users Signed Up</span> / <span th:text="${activity.maxCapacity}">Max Capacity</span></p>
                     <!-- Formulario para inscribirse en la actividad -->
                     <form th:action="@{{activityId}(activityId=${activity.id})}" method="post">
-                        <select name="userId">
-                            <option th:each="user : ${usersNotSignedUp}" th:value="${user.id}" th:text="${user.email}">User Name</option>
-                        </select>
-                        <button type="submit" class="btn btn-primary">Sign up User</button>
+                        <div th:if="${usersNotSignedUp.isEmpty()}">
+                            <p>All users in database are already signed up</p>
+                        </div>
+                        <div th:unless="${usersNotSignedUp.isEmpty()}">
+                            <select name="userId">
+                                <option th:each="user : ${usersNotSignedUp}" th:value="${user.id}" th:text="${user.email}">User Name</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">Sign up User</button>
+                        </div>
                     </form>
-                    <form th:action="@{/appActivities/activities/signup/{activityId}/users(activityId=${activity.id})}"  method="get">
+                    <form th:action="@{/appActivities/activities/{activityId}/users(activityId=${activity.id})}"  method="get">
                         <button type="submit" class="btn btn-secondary">Show Users In This Activity</button>
                     </form>
-
+                    <a href="/" class="btn btn-secondary">Back to Home</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {

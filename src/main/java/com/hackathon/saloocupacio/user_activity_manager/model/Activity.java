@@ -12,6 +12,8 @@ import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.HashSet;
 import java.util.Set;
+import jakarta.persistence.CascadeType;
+
 
 @Getter
 @Setter
@@ -37,6 +39,6 @@ public class Activity {
     private int maxCapacity;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "activities")
+    @ManyToMany(mappedBy = "activities", cascade = CascadeType.ALL)
     private Set<User> users = new HashSet<>();
 }

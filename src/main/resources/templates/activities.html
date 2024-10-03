@@ -45,6 +45,7 @@
                    type="number">
         </div>
         <button class="btn btn-primary" type="submit">Add Activity</button>
+
     </form>
 
     <!-- Activities Table -->
@@ -65,15 +66,13 @@
             <td th:text="${activity.description}"></td>
             <td th:text="${activity.maxCapacity}"></td>
             <td>
-                <a class="btn btn-sm btn-primary" th:href="@{/appActivities/activities/signup/{id}(id=${activity.id})}">View
+                <a class="btn btn-sm btn-primary" th:href="@{/appActivities/activities/{id}/signup(id=${activity.id})}">View
                     Details</a>
                 <a class="btn btn-sm btn-info" th:href="@{/appActivities/activities/{id}(id=${activity.id})}">Edit</a>
                 <!-- Delete Button -->
-                <form style="display: inline;" th:action="@{/appActivities/activities/{id}(id=${activity.id})}"
-                      th:method="post">
-                    <button class="btn btn-sm btn-danger" data-bs-target="#deleteConfirmationModal" data-bs-toggle="modal"
-                            type="button">Delete
-                    </button>
+                <form th:action="@{/appActivities/activities/{id}(id=${activity.id})}" method="post" style="display: inline;" onsubmit="return confirmDelete();">
+                    <input type="hidden" name="_method" value="DELETE" />
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                 </form>
             </td>
         </tr>
@@ -111,25 +110,27 @@
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div aria-hidden="true" aria-labelledby="deleteConfirmationModalLabel" class="modal fade" id="deleteConfirmationModal"
-     tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
-                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this activity?</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
-                <button class="btn btn-danger" id="deleteButton" type="button">Delete</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!--<div th:each="activity : ${activities}" aria-hidden="true" aria-labelledby="deleteConfirmationModalLabel" class="modal fade" th:id="deleteConfirmationModal+${activity.id}" tabindex="-1">-->
+<!--    <div class="modal-dialog">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <h5 class="modal-title" id="deleteConfirmationModalLabel">Delete Confirmation</h5>-->
+<!--                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button">-->
+<!--                </button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+<!--                <p>Are you sure you want to delete this activity?</p>-->
+<!--            </div>-->
+<!--            <div class="modal-footer">-->
+<!--                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>-->
+<!--                <form style="display: inline;" th:action="@{/appActivities/activities/{id}(id=${activity.id})}" method="post">-->
+<!--                    <input type="hidden" name="_method" value="delete">-->
+<!--                    <button class="btn btn-danger" type="submit">Delete</button>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
 <!-- Toast for notifications -->
 <div aria-atomic="true" aria-live="assertive" class="toast" data-bs-delay="3000" role="alert">
@@ -170,10 +171,10 @@
     }
 </script>
 <script>
-    document.getElementById('deleteButton').addEventListener('click', function () {
-        document.getElementById('deleteConfirmationModal').style.display = 'none';
-        document.querySelector('form[action*="/appActivities/activities/' + ${activity.id} +'"]').submit();
-    });
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this activity?");
+    }
 </script>
+
 </body>
 </html>

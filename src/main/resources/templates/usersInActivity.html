@@ -20,20 +20,33 @@
                 <th>Surname</th>
                 <th>Age</th>
                 <th>Email</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="user : ${users}">
+            <tr th:each="user : ${usersInActivity}">
                 <td th:text="${user.id}"></td>
                 <td th:text="${user.name}"></td>
                 <td th:text="${user.surname}"></td>
                 <td th:text="${user.age}"></td>
                 <td th:text="${user.email}"></td>
+                <td>
+                    <form th:action="@{/appActivities/activities/{activityId}/users/{userId}(activityId=${activityId}, userId=${user.id})}" method="post" style="display: inline;" onsubmit="return confirmDelete();">
+                        <input type="hidden" name="_method" value="DELETE" />
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
-    <a href="/" class="btn btn-secondary">Back to Home</a>
+    <a th:href="@{/appActivities/activities/signup/{id}(id=${activityId})}" class="btn btn-dark">Back</a>
 </div>
+<script>
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this user from the activity?");
+    }
+</script>
+
 </body>
 </html>

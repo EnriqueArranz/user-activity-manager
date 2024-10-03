@@ -32,7 +32,7 @@ public class User {
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
     private String email;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_activities",
             joinColumns = @JoinColumn(name = "user_id"),
