@@ -23,7 +23,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 1. Clone the repo
    ```
-   git clone https://github.com/yourusername/user-activity-manager.git
+   git clone https://github.com/EnriqueArranz/user-activity-manager.git
    ```
 2. Navigate to the project directory
    ```
