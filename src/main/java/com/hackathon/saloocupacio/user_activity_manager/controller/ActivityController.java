@@ -118,8 +118,8 @@ public class ActivityController {
         return "activityDetails";
     }
 
-    @PostMapping("activities/{activityId}/signup/{userId}")
-    public String signUpUserToActivity(@PathVariable Long activityId, @PathVariable Long userId, RedirectAttributes redirectAttrs) {
+    @PostMapping("activities/{activityId}/signup")
+    public String signUpUserToActivity(@PathVariable Long activityId, @RequestParam Long userId, RedirectAttributes redirectAttrs) {
         SignUpResponse response = activityService.signUpUserInActivity(activityId, userId);
         if (response.isSuccess()) {
             redirectAttrs.addFlashAttribute("message", response.getMessage());
@@ -128,7 +128,8 @@ public class ActivityController {
             redirectAttrs.addFlashAttribute("message", response.getMessage());
             redirectAttrs.addFlashAttribute("messageType", "failure");
         }
-        return "redirect:/appActivities/activities/signup/" + activityId;
+        return "redirect:/appActivities/activities/" + activityId + "/signup";
+//
     }
     @GetMapping("/activities/{activityId}/users")
     public String getUsersInActivity(@PathVariable Long activityId, Model model) {

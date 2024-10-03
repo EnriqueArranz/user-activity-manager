@@ -63,6 +63,7 @@ The User Activity Manager application will start running at `http://localhost:80
 1. Open your preferred web browser (e.g., Chrome, Firefox, Safari)
 2. Navigate to `http://localhost:8080`
 3. You should see the home page of the User Activity Manager
+4. There is a JSON called example to try import activities method.
 
 The application uses Thymeleaf for server-side rendering of HTML pages, providing a user-friendly interface for managing user activities. You can navigate through different pages and perform various operations directly in your browser.
 

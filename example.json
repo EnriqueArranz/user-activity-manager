@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Yoga Session",
+    "description": "Yoga class to relax and stretch muscles.",
+    "maxCapacity": 20
+  },
+  {
+    "name": "Cooking Workshop",
+    "description": "Learn how to cook Mediterranean dishes.",
+    "maxCapacity": 15
+  },
+  {
+    "name": "Photography Course",
+    "description": "Workshop to improve your photography skills.",
+    "maxCapacity": 10
+  },
+  {
+    "name": "Rock Climbing",
+    "description": "Rock climbing activity on an indoor climbing wall.",
+    "maxCapacity": 12
+  },
+  {
+    "name": "Meditation Session",
+    "description": "Guided meditation session for inner peace.",
+    "maxCapacity": 30
+  }
+]
