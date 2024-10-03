@@ -61,20 +61,15 @@ public class UserService {
         logger.info("Fetching all users");
         return userRepository.findAll();
     }
+
     public void signUpToActivity(String email, Long activityId) {
         // Buscar usuario por email
         Optional<User> selectedUser = null;
         selectedUser = userRepository.findByEmail(email);
-
-
         Optional<Activity> selectedActivity = null;
         selectedActivity = activityRepository.findById(activityId);
-
-
-
         // Añadir actividad al usuario
         selectedUser.get().getActivities().add(selectedActivity.get());
-
         // Guardar usuario con la actividad asociada
         userRepository.save(selectedUser.get());
     }

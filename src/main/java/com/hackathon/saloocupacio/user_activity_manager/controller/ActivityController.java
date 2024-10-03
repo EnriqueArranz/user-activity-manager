@@ -1,11 +1,10 @@
 package com.hackathon.saloocupacio.user_activity_manager.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hackathon.saloocupacio.user_activity_manager.model.Activity;
+import com.hackathon.saloocupacio.user_activity_manager.model.SignUpResponse;
 import com.hackathon.saloocupacio.user_activity_manager.model.User;
 import com.hackathon.saloocupacio.user_activity_manager.service.ActivityService;
 import com.hackathon.saloocupacio.user_activity_manager.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,12 +14,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/appActivities")
@@ -31,8 +31,9 @@ public class ActivityController {
     private UserService userService;
 
     @PostMapping("/activity")
-    public String createActivity(@ModelAttribute Activity activity) {
+    public String createActivity(@ModelAttribute Activity activity, RedirectAttributes redirectAttributes) {
         activityService.createActivity(activity);
+        redirectAttributes.addFlashAttribute("addSuccess", true);
         return "redirect:/appActivities/activities";
     }
 
@@ -43,9 +44,10 @@ public class ActivityController {
         return "activities";
     }
 
-    @DeleteMapping("/activities/{id}")
-    public String deleteActivity(@PathVariable Long id) {
+    @PostMapping("/activities/{id}")
+    public String deleteActivity(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         activityService.deleteActivity(id);
+        redirectAttributes.addFlashAttribute("deleteSuccess", true);
         return "redirect:/appActivities/activities";
     }
 
@@ -86,8 +88,9 @@ public class ActivityController {
     }
 
     @PutMapping("/activities/{id}")
-    public String updateActivity(@PathVariable Long id, @ModelAttribute Activity activity) {
+    public String updateActivity(@PathVariable Long id, @ModelAttribute Activity activity, RedirectAttributes redirectAttributes) {
         activityService.updateActivity(id, activity);
+        redirectAttributes.addFlashAttribute("editSuccess", true);
         return "redirect:/appActivities/activities";
     }
 
@@ -95,15 +98,41 @@ public class ActivityController {
     public String signUpToActivity(@PathVariable Long activityId, Model model) {
         Activity activity = activityService.findById(activityId);
         List<User> users = userService.getAllUsers();
+        List<User> usersNotSignedUp = users.stream()
+                .filter(user -> !activity.getUsers().contains(user))
+                .collect(Collectors.toList());
         model.addAttribute("activityId", activityId);
         model.addAttribute("activity", activity);
         model.addAttribute("users", users);
+        model.addAttribute("usersNotSignedUp", usersNotSignedUp);
         return "activityDetails";
     }
 
     @PostMapping("activities/signup/{activityId}")
-    public String signUpUserToActivity(@PathVariable Long activityId, @RequestParam Long userId) {
-        activityService.signUpUserInActivity(activityId, userId);
-        return "redirect:/appActivities/activities";
+    public String signUpUserToActivity(@PathVariable Long activityId, @RequestParam Long userId, RedirectAttributes redirectAttrs) {
+        SignUpResponse response = activityService.signUpUserInActivity(activityId, userId);
+        if (response.isSuccess()) {
+            redirectAttrs.addFlashAttribute("message", response.getMessage());
+            redirectAttrs.addFlashAttribute("messageType", "success");
+        } else {
+            redirectAttrs.addFlashAttribute("message", response.getMessage());
+            redirectAttrs.addFlashAttribute("messageType", "failure");
+        }
+        return "redirect:/appActivities/activities/signup/" + activityId;
     }
+    @GetMapping("/activities/signup/{activityId}/users")
+    public String getUsersInActivity(@PathVariable Long activityId, Model model) {
+        Optional<List<User>> users = activityService.getUsersInActivity(activityId);
+        Activity activity = activityService.getActivityById(activityId);
+        model.addAttribute("activity", activity);
+        if (users.isPresent()) {
+            model.addAttribute("users", users.get());
+        } else {
+            model.addAttribute("users", Collections.emptyList());
+            model.addAttribute("noUsers", true);
+        }
+        return "usersInActivity";
+    }
+
+
 }

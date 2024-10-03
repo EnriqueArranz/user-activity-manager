@@ -4,18 +4,17 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hackathon.saloocupacio.user_activity_manager.model.Activity;
+import com.hackathon.saloocupacio.user_activity_manager.model.SignUpResponse;
 import com.hackathon.saloocupacio.user_activity_manager.model.User;
 import com.hackathon.saloocupacio.user_activity_manager.repository.ActivityRepository;
 import com.hackathon.saloocupacio.user_activity_manager.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ActivityService {
@@ -37,7 +36,6 @@ public class ActivityService {
     public void deleteActivity(Long activityId) {
         Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() -> new RuntimeException("Activity not found"));
-        // Remove the activity from all associated users
         for (User user : activity.getUsers()) {
             user.getActivities().remove(activity);
             userRepository.save(user);
@@ -47,12 +45,10 @@ public class ActivityService {
 
     public List<Activity> importActivities(File jsonFile) throws IOException {
         try {
-            // Try to parse as a list of activities
             List<Activity> activities = objectMapper.readValue(jsonFile,
                     TypeFactory.defaultInstance().constructCollectionType(List.class, Activity.class));
             return activityRepository.saveAll(activities);
         } catch (IOException e) {
-            // If parsing as a list fails, try to parse as a single activity
             Activity activity = objectMapper.readValue(jsonFile, Activity.class);
             List<Activity> result = new ArrayList<>();
             result.add(activityRepository.save(activity));
@@ -82,10 +78,20 @@ public class ActivityService {
         return activityRepository.findById(id).orElseThrow();
     }
 
-    public void signUpUserInActivity(Long activityId, Long userId) {
+    public SignUpResponse signUpUserInActivity(Long activityId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         Activity activity = activityRepository.findById(activityId).orElseThrow();
+        if (user.getActivities().contains(activity)) {
+            return new SignUpResponse(false, user.getName()+" already signed up for  " + activity.getName());
+        }
         user.getActivities().add(activity);
         userRepository.save(user);
+        return new SignUpResponse(true, "User signed up for  " + activity.getName());
+    }
+
+
+    public Optional<List<User>> getUsersInActivity(Long activityId) {
+        Activity activity = activityRepository.findById(activityId).orElseThrow();
+        return Optional.ofNullable(activity.getUsers() != null ? new ArrayList<>(activity.getUsers()) : null);
     }
 }

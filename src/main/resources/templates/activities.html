@@ -1,136 +1,179 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manage Activities</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .toast {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1050;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Manage Activities</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+        .toast.bg-success {
+            border-color: #28a745;
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
-  <h1 class="mb-4">Manage Activities</h1>
+    <h1 class="mb-4">Manage Activities</h1>
 
-  <!-- Display import success or error messages -->
-  <div th:if="${importSuccess}" class="alert alert-success" role="alert">
-    Successfully imported <span th:text="${importedCount}"></span> activities.
-  </div>
-  <div th:if="${importError}" class="alert alert-danger" role="alert" th:text="${importError}"></div>
+    <div id="deleteSuccess" style="display: none;" th:if="${deleteSuccess}"></div>
+    <div id="addSuccess" style="display: none;" th:if="${addSuccess}"></div>
+    <div id="editSuccess" style="display: none;" th:if="${editSuccess}"></div>
 
-  <!-- Add Activity Form -->
-  <form th:action="@{/appActivities/activity}" method="post" class="mb-4">
-    <div class="mb-3">
-      <input type="text" class="form-control" name="name" placeholder="Activity Name" required>
+    <!-- Display import success or error messages -->
+    <div class="alert alert-success" role="alert" th:if="${importSuccess}">
+        Successfully imported <span th:text="${importedCount}"></span> activities.
     </div>
-    <div class="mb-3">
-      <textarea class="form-control" name="description" placeholder="Description" required></textarea>
-    </div>
-    <div class="mb-3">
-      <input type="number" class="form-control" name="maxCapacity" placeholder="Max Capacity" required min="1" max="1000">
-    </div>
-    <button type="submit" class="btn btn-primary">Add Activity</button>
-  </form>
+    <div class="alert alert-danger" role="alert" th:if="${importError}" th:text="${importError}"></div>
 
-  <!-- Activities Table -->
-  <table class="table">
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Max Capacity</th>
-      <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="activity : ${activities}">
-      <td th:text="${activity.id}"></td>
-      <td th:text="${activity.name}"></td>
-      <td th:text="${activity.description}"></td>
-      <td th:text="${activity.maxCapacity}"></td>
-      <td>
-        <a th:href="@{/appActivities/activities/signup/{id}(id=${activity.id})}" class="btn btn-sm btn-primary">View Details</a>
-        <a th:href="@{/appActivities/activities/{id}(id=${activity.id})}" class="btn btn-sm btn-info">Edit</a>
-        <form th:action="@{/appActivities/activities/{id}(id=${activity.id})}" th:method="delete" style="display: inline;" onsubmit="return confirmDelete();">
-          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-        </form>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+    <!-- Add Activity Form -->
+    <form class="mb-4" method="post" th:action="@{/appActivities/activity}">
+        <div class="mb-3">
+            <input class="form-control" name="name" placeholder="Activity Name" required type="text">
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" name="description" placeholder="Description" required></textarea>
+        </div>
+        <div class="mb-3">
+            <input class="form-control" max="1000" min="1" name="maxCapacity" placeholder="Max Capacity" required
+                   type="number">
+        </div>
+        <button class="btn btn-primary" type="submit">Add Activity</button>
+    </form>
 
-  <!-- Import/Export Buttons -->
-  <div class="mb-3">
-    <a th:href="@{/appActivities/activities/export}" class="btn btn-success" target="_blank">Export Activities</a>
-    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#importModal">
-      Import Activities
-    </button>
-  </div>
-  <a href="/" class="btn btn-secondary">Back to Home</a>
+    <!-- Activities Table -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Max Capacity</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="activity : ${activities}">
+            <td th:text="${activity.id}"></td>
+            <td th:text="${activity.name}"></td>
+            <td th:text="${activity.description}"></td>
+            <td th:text="${activity.maxCapacity}"></td>
+            <td>
+                <a class="btn btn-sm btn-primary" th:href="@{/appActivities/activities/signup/{id}(id=${activity.id})}">View
+                    Details</a>
+                <a class="btn btn-sm btn-info" th:href="@{/appActivities/activities/{id}(id=${activity.id})}">Edit</a>
+                <!-- Delete Button -->
+                <form style="display: inline;" th:action="@{/appActivities/activities/{id}(id=${activity.id})}"
+                      th:method="post">
+                    <button class="btn btn-sm btn-danger" data-bs-target="#deleteConfirmationModal" data-bs-toggle="modal"
+                            type="button">Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Import/Export Buttons -->
+    <div class="mb-3">
+        <a class="btn btn-success" target="_blank" th:href="@{/appActivities/activities/export}">Export Activities</a>
+        <button class="btn btn-warning" data-bs-target="#importModal" data-bs-toggle="modal" type="button">
+            Import Activities
+        </button>
+    </div>
+    <a class="btn btn-secondary" href="/">Back to Home</a>
 </div>
 
 <!-- Import Modal -->
-<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="importModalLabel">Import Activities</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form th:action="@{/appActivities/activities/import}" method="post" enctype="multipart/form-data">
-          <div class="mb-3">
-            <label for="file" class="form-label">JSON File</label>
-            <input type="file" class="form-control" id="file" name="file" accept=".json" required>
-          </div>
-          <button type="submit" class="btn btn-primary">Import</button>
-        </form>
-      </div>
+<div aria-hidden="true" aria-labelledby="importModalLabel" class="modal fade" id="importModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">Import Activities</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" method="post" th:action="@{/appActivities/activities/import}">
+                    <div class="mb-3">
+                        <label class="form-label" for="file">JSON File</label>
+                        <input accept=".json" class="form-control" id="file" name="file" required type="file">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Import</button>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div aria-hidden="true" aria-labelledby="deleteConfirmationModalLabel" class="modal fade" id="deleteConfirmationModal"
+     tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this activity?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                <button class="btn btn-danger" id="deleteButton" type="button">Delete</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Toast for notifications -->
-<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
-  <div class="toast-header">
-    <strong class="me-auto">Notification</strong>
-    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-  </div>
-  <div class="toast-body" id="toastMessage"></div>
+<div aria-atomic="true" aria-live="assertive" class="toast" data-bs-delay="3000" role="alert">
+    <div class="toast-header">
+        <strong class="me-auto">Notification</strong>
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="toast" type="button"></button>
+    </div>
+    <div class="toast-body" id="toastMessage"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  function confirmDelete() {
-    return confirm("Are you sure you want to delete this activity?");
-  }
 
-  // Check for notifications
-  const urlParams = new URLSearchParams(window.location.search);
-  const toastEl = document.querySelector('.toast');
-  const toast = new bootstrap.Toast(toastEl);
-  const toastMessage = document.getElementById('toastMessage');
+    const toastEl = document.querySelector('.toast');
+    const toast = new bootstrap.Toast(toastEl);
+    const toastMessage = document.getElementById('toastMessage');
 
-  if (urlParams.get('delete_success') === 'true') {
-    toastMessage.textContent = 'Activity successfully deleted!';
-    toast.show();
-  } else if (document.querySelector('.alert-success')) {
-    toastMessage.textContent = document.querySelector('.alert-success').textContent;
-    toast.show();
-  } else if (document.querySelector('.alert-danger')) {
-    toastMessage.textContent = document.querySelector('.alert-danger').textContent;
-    toast.show();
-  }
-
-  // Remove the parameter from the URL
-  window.history.replaceState({}, document.title, window.location.pathname);
+    if (document.getElementById('deleteSuccess')) {
+        toastMessage.textContent = 'Activity successfully deleted!';
+        toastEl.classList.add('bg-success', 'text-white');
+        toast.show();
+    } else if (document.getElementById('addSuccess')) {
+        toastMessage.textContent = 'Activity successfully added!';
+        toastEl.classList.add('bg-success', 'text-white');
+        toast.show();
+    } else if (document.getElementById('editSuccess')) {
+        toastMessage.textContent = 'Activity successfully updated!';
+        toastEl.classList.add('bg-success', 'text-white');
+        toast.show();
+    } else if (document.querySelector('.alert-success')) {
+        toastMessage.textContent = document.querySelector('.alert-success').textContent;
+        toastEl.classList.add('bg-success', 'text-white');
+        toast.show();
+    } else if (document.querySelector('.alert-danger')) {
+        toastMessage.textContent = document.querySelector('.alert-danger').textContent;
+        toastEl.classList.add('bg-danger', 'text-white');
+        toast.show();
+    }
+</script>
+<script>
+    document.getElementById('deleteButton').addEventListener('click', function () {
+        document.getElementById('deleteConfirmationModal').style.display = 'none';
+        document.querySelector('form[action*="/appActivities/activities/' + ${activity.id} +'"]').submit();
+    });
 </script>
 </body>
 </html>

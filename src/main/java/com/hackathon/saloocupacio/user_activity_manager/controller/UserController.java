@@ -1,12 +1,9 @@
 package com.hackathon.saloocupacio.user_activity_manager.controller;
 
-import com.hackathon.saloocupacio.user_activity_manager.exception.ResourceNotFoundException;
-import com.hackathon.saloocupacio.user_activity_manager.model.Activity;
 import com.hackathon.saloocupacio.user_activity_manager.model.User;
 import com.hackathon.saloocupacio.user_activity_manager.repository.ActivityRepository;
 import com.hackathon.saloocupacio.user_activity_manager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -54,28 +51,6 @@ public class UserController {
     }
 
 
-//    @GetMapping("/signup")
-//    public String showSignUpForm(Model model) {
-//        // Cargamos todas las actividades disponibles
-//        List<Activity> activities = activityRepository.findAll();
-//        model.addAttribute("activities", activities);
-//        return "signup"; // Renderiza el formulario signup.html
-//    }
-//
-//    @PostMapping("/signup")
-//    public String signUpToActivity(
-//            @RequestParam String email,
-//            @RequestParam Long activityId) {
-//        System.out.println("email: " + email);
-//        System.out.println("activityId: " + activityId);
-//        userService.signUpToActivity(email, activityId);
-//        return "redirect:/signup?success";
-//    }
-
-    @GetMapping("/signup/{activityId}/success")
-    public String showSuccessPage() {
-        return "signupSuccess";
-    }
 
     @GetMapping("/signup/{activityId}")
     public String signUpToActivity(@PathVariable Long activityId, Model model) {
@@ -83,11 +58,9 @@ public class UserController {
         return "signupUser";
     }
 
-
     @PostMapping("/signup/{activityId}")
     public String signUpUserToActivity(@PathVariable Long activityId, @RequestParam String email) {
         userService.signUpUserToActivity(email, activityId);
         return "redirect:/appActivities/signup/" + activityId + "/success";
     }
-
 }

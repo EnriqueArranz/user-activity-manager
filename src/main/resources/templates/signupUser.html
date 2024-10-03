@@ -14,5 +14,37 @@
 <div th:if="${param.success}">
   <p class="success">You have successfully signed up to the activity!</p>
 </div>
+<div id="message-popup" th:if="${message != null}">
+  <p th:text="${message}">Message</p>
+</div>
+
+<script>
+  $(document).ready(function() {
+    setTimeout(function() {
+      $("#message-popup").fadeOut();
+    }, 5000);
+  });
+</script>
+
+<script>
+  document.getElementById('signupForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var email = document.getElementById('email').value;
+    var activityId = document.querySelector('[th\\:text]').textContent;
+    showPopup(email, activityId);
+  });
+
+  function showPopup(email, activityId) {
+    document.getElementById('userEmail').textContent = email;
+    document.getElementById('activityId').textContent = activityId;
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('popup').style.display = 'block';
+  }
+
+  function closePopup() {
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('popup').style.display = 'none';
+  }
+</script>
 </body>
 </html>

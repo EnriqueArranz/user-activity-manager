@@ -7,6 +7,9 @@
 </head>
 <body>
 <div class="container mt-5">
+    <div th:if="${editSuccess}" class="alert alert-success" role="alert">
+        Activity successfully updated!
+    </div>
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
@@ -16,7 +19,6 @@
                 <div class="card-body">
                     <form th:action="@{/appActivities/activities/{id}(id=${activity.id})}" th:method="put">
                         <div class="mb-3">
-
                             <input type="text" class="form-control" name="name" th:value="${activity.name}" placeholder="Name" required>
                         </div>
                         <div class="mb-3">
@@ -24,7 +26,6 @@
                                       th:text="${activity.description}"></textarea>
                         </div>
                         <div class="mb-3">
-
                             <input type="number" class="form-control" name="maxCapacity" th:value="${activity.maxCapacity}" placeholder="Max Capacity" required min="1" max="1000">
                         </div>
                         <button type="submit" class="btn btn-primary">Update</button>
@@ -36,15 +37,3 @@
 </div>
 </body>
 </html>
-<script>
-    // Change text color back to black when the user starts editing
-    document.querySelectorAll('.form-control').forEach(function (element) {
-        element.addEventListener('input', function () {
-            if (this.value.trim()) {
-                this.style.color = '#000'; // black for edited text
-            } else {
-                this.style.color = '#6c757d'; // grey if empty
-            }
-        });
-    });
-</script>
