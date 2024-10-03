@@ -80,7 +80,7 @@ The application uses Thymeleaf for server-side rendering of HTML pages, providin
 
 ## Authors
 
-* **Enrique Arranz**  [YourGithubUsername](https://github.com/EnriqueArranz)
+* **Enrique Arranz**  [EnriqueArranz](https://github.com/EnriqueArranz)
 
 ## License
 
