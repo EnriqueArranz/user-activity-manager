@@ -30,7 +30,7 @@ public class UserController {
         redirectAttributes.addFlashAttribute("addSuccess", true);
         return "redirect:/appActivities/users";
     }
-    
+
 
     @GetMapping("/users")
     public String getUsers(Model model) {
