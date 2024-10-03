@@ -25,7 +25,6 @@ public class UserService {
     private ActivityService activityService;
 
     public User createUser(User user) {
-        logger.info("Creating new user: {}", user.getName());
         return userRepository.save(user);
     }
 
