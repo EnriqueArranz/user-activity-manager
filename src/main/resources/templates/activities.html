@@ -66,8 +66,7 @@
             <td th:text="${activity.description}"></td>
             <td th:text="${activity.maxCapacity}"></td>
             <td>
-                <a class="btn btn-sm btn-primary" th:href="@{/appActivities/activities/{id}/signup(id=${activity.id})}">View
-                    Details</a>
+                <a class="btn btn-sm btn-primary" th:href="@{/appActivities/activities/{id}/signup(id=${activity.id})}">Sign Up User</a>
                 <a class="btn btn-sm btn-info" th:href="@{/appActivities/activities/{id}(id=${activity.id})}">Edit</a>
                 <!-- Delete Button -->
                 <form th:action="@{/appActivities/activities/{id}(id=${activity.id})}" method="post" style="display: inline;" onsubmit="return confirmDelete();">

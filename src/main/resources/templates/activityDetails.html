@@ -46,6 +46,7 @@
                     <p>Max Capacity: <span th:text="${activity.maxCapacity}">Max Capacity</span></p>
                     <p>Users Signed Up: <span th:text="${activity.users.size()}">Users Signed Up</span></p>
                     <p>Users Signed Up: <span th:text="${activity.users.size()}" th:style="'color: green'">Users Signed Up</span> / <span th:text="${activity.maxCapacity}">Max Capacity</span></p>
+                    <p><span>Users not signed up:</span></p>
                     <!-- Formulario para inscribirse en la actividad -->
                     <form th:action="@{/appActivities/activities/{activityId}/signup(activityId=${activity.id})}" method="post">
                         <div th:if="${usersNotSignedUp.isEmpty()}">
